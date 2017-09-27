@@ -27,11 +27,78 @@
     <video id="video-lesson" src="converted-videos/5Where-is-it-1.m4v" height="300" width="400" loop controls></video>
   </div>
   <div class="prose">
+    <ol id="editor"></ol>
+  </div>
+  <div class="prose">
     <ol id="dialogs"></ol>
   </div>
 </body>
 <script src="cell.js"></script>
 <script>
+
+  var Editor = {
+    id:'editor',
+    $cell:true,
+    $type:'form',
+    _visible:true,
+    _start:0,
+    _finish:0,
+    id:'editor',
+    $components:[],
+    $init(){
+      var vd = document.getElementById('video-lesson')
+      var editor = document.getElementById('editor')
+      var that = this
+      this.ontimeopdateListener = function ontimeopdateListener(event) {
+        console.log('currentTime:' + vd.currentTime)
+        editor._start = vd.currentTime
+        editor.$update()
+      }
+      vd.addEventListener('timeupdate', this.ontimeopdateListener)
+    },
+    $update:function(){
+      this.$components = [{
+      $type:'div',
+      class:'input-group',
+      $components:[{
+        $type:'button',
+        type:'button',
+        $text:this._start,
+        class:'button'
+      },{
+        $type:'input',
+        type:'text',
+        value:this._starts
+      },{
+        $type:'button',
+        type:'button',
+        $text:this._end,
+        class:'button'
+      },]
+    },{
+      $type:'div',
+      class:'input-group',
+      $components:[{
+        $type:'input',
+        type:'range',
+        value:'50'
+      },{
+        $type:'input',
+        type:'range',
+        value:'50'
+      }]
+    },{
+      $type:'div',
+      class:'input-group',
+      $components:[{
+        $type:'button',
+        type:'button',
+        class:'button',
+        $text:'Add'
+      }]
+    }]
+    }
+  }
 
   var list = {
     $cell: true,
@@ -48,50 +115,48 @@
         return {
           $type: 'li',
           $components: [{
-            $type:'a',
-            href:'#',
-            class:'button button-sm',
-            $text:'> ',
+            $type: 'a',
+            href: '#',
+            $text: '  ' + el.text,
             onclick(){
               console.log(el.start)
               var vd = document.getElementById('video-lesson')
               vd.currentTime = el.start
               vd.play()
               vd.ontimeupdate = function (e) {
-                if (vd.currentTime > el.end) {
+                if (vd.currentTime >= el.end) {
                   vd.pause()
                 }
-              };
+              }
             }
-          },{
-            $type: 'a',
-            href: '#',
-            $text: '  ' + el.text
           }]
         }
       })
     },
     _setSkips(data){
-      console.log(data)
+      // console.log(data)
       this._skips = data
     },
     $init:function(){
+      this.ontimeopdateListener = function (e) {
+        // console.log('currentTime:' + v.currentTime)
+      }
       var v = document.getElementById('video-lesson')
-      v.ontimeupdate = function (e) {
-        console.log('currentTime:' + v.currentTime)
-      };
+      v.addEventListener('timeupdate', this.ontimeopdateListener);
       var videos = ['5Where-it-is.mp4']
     
-      dialogTest = `1. [Where is it](0-3)
-    2. [I hope this will helps](3.2-4.8)
-    3. [welcome to our course](4.8-5.6)
+      dialogTest = `
+    1. [Where is it](15-20)
+    2. [Hello, welcome back](20-23)
+    3. [This is program 5 (five)](23-25)
+    3. [5...5...5...5](25-30)
     `
     
       var comps = dialogTest.trim().split('\n').map(function (el, i) {
         if (el === "") { return '' }
         var r = /\d+\..\[(.*)]\((\S*)\)/
         var rescued = r.exec(el)
-        console.log(JSON.stringify(rescued))
+        // console.log(JSON.stringify(rescued))
         return rescued.reduce(function prepareElements(pre, curr, i) {
           if (i == 0) { return {} }
           if (i == 1) { pre.text = curr }
@@ -102,7 +167,7 @@
           return pre
         }, {})
       })
-      console.log(comps)
+      // console.log(comps)
       document.getElementById('dialogs')._setSkips(comps)
     }
   }
