@@ -55,6 +55,7 @@
         editor.$update()
       }
       vd.addEventListener('timeupdate', this.ontimeopdateListener)
+      editor.$update()
     },
     $update:function(){
       this.$components = [{
@@ -119,15 +120,13 @@
             href: '#',
             $text: '  ' + el.text,
             onclick(){
-              console.log(el.start)
+              console.log(this.ontimeopdateListener)
               var vd = document.getElementById('video-lesson')
               vd.currentTime = el.start
+              vd.start = el.start
+              vd.end = el.end
               vd.play()
-              vd.ontimeupdate = function (e) {
-                if (vd.currentTime >= el.end) {
-                  vd.pause()
-                }
-              }
+              vd.addEventListener('timeupdate',vd.ontimeopdateListener)
             }
           }]
         }
@@ -138,11 +137,15 @@
       this._skips = data
     },
     $init:function(){
-      this.ontimeopdateListener = function (e) {
-        // console.log('currentTime:' + v.currentTime)
+      var vd = document.getElementById('video-lesson')
+      vd.ontimeopdateListener = function (e) {
+        var dialogs = document.getElementById('dialogs')
+        if (vd.currentTime >= vd.end) {
+          vd.pause()
+          vd.removeEventListener('timeupdate',vd.ontimeopdateListener)
+        }
       }
       var v = document.getElementById('video-lesson')
-      v.addEventListener('timeupdate', this.ontimeopdateListener);
       var videos = ['5Where-it-is.mp4']
     
       dialogTest = `
