@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,69 +36,116 @@
 </body>
 <script src="cell.js"></script>
 <script>
+  class Video {
+    constructor(elID) {
+      this.el = document.getElementById(elID)
+      this.dialogs = document.getElementById('dialogs')
+      this.editor = document.getElementById('editor')
+      this.ontimeopdateListener = (e) => {
+        console.log(this)
+        if (this.el.currentTime >= this.editor._finish) {
+          this.pause()
+          this.el.removeEventListener('timeupdate', this.ontimeopdateListener)
+        }
+      }
+    }
+
+    loop(start, finish, content = "") {
+      this.el.currentTime = start
+      this.editor._start = start
+      this.editor._finish = finish
+      this.editor._content = content
+      this.play()
+      this.el.addEventListener('timeupdate', this.ontimeopdateListener)
+    }
+
+    play(){
+      this.el.play()
+    }
+
+    pause(){
+      this.el.pause()
+    }
+  }
+  var video = new Video('video-lesson')
 
   var Editor = {
-    id:'editor',
-    $cell:true,
-    $type:'form',
-    _visible:true,
-    _start:0,
-    _finish:0,
-    id:'editor',
-    $components:[],
-    $init(){
+    id: 'editor',
+    $cell: true,
+    $type: 'form',
+    _visible: true,
+    _start: 0,
+    _finish: 0,
+    _content: '',
+    id: 'editor',
+    $components: [],
+    $init() {
       var vd = document.getElementById('video-lesson')
       var editor = document.getElementById('editor')
       var that = this
       this.ontimeopdateListener = function ontimeopdateListener(event) {
         console.log('currentTime:' + vd.currentTime)
         editor._start = vd.currentTime
+        editor._finish = vd.currentTime
         editor.$update()
       }
       vd.addEventListener('timeupdate', this.ontimeopdateListener)
       editor.$update()
     },
-    $update:function(){
+    $update: function () {
       this.$components = [{
-      $type:'div',
-      class:'input-group',
-      $components:[{
-        $type:'button',
-        type:'button',
-        $text:this._start,
-        class:'button'
-      },{
-        $type:'input',
-        type:'text',
-        value:this._starts
-      },{
-        $type:'button',
-        type:'button',
-        $text:this._end,
-        class:'button'
-      },]
-    },{
-      $type:'div',
-      class:'input-group',
-      $components:[{
-        $type:'input',
-        type:'range',
-        value:'50'
-      },{
-        $type:'input',
-        type:'range',
-        value:'50'
+        $type: 'div',
+        class: 'input-group',
+        $components: [{
+          $type: 'button',
+          type: 'button',
+          $text: this._start,
+          class: 'button'
+        }, {
+          $type: 'input',
+          type: 'text',
+          value: this._content,
+          onchange(event) {
+            document.getElementById('editor')._content = event.target.value
+          }
+        }, {
+          $type: 'button',
+          type: 'button',
+          $text: this._finish,
+          class: 'button'
+        },]
+      }, {
+        $type: 'div',
+        class: 'input-group',
+        $components: [{
+          $type: 'input',
+          min: -10,
+          step: .01,
+          max: 10,
+          type: 'range',
+          value: 0
+        }, {
+          $type: 'input',
+          min: -10,
+          step: .01,
+          max: 10,
+          type: 'range',
+          value: 0
+        }]
+      }, {
+        $type: 'div',
+        class: 'input-group',
+        $components: [{
+          $type: 'button',
+          type: 'button',
+          class: 'button button-success',
+          $text: 'Add',
+          onclick() {
+            ed = document.getElementById('editor')
+            document.getElementById('dialogs')._skips.push({ text: ed._content, start: ed._start, end: ed._finish })
+          }
+        }]
       }]
-    },{
-      $type:'div',
-      class:'input-group',
-      $components:[{
-        $type:'button',
-        type:'button',
-        class:'button',
-        $text:'Add'
-      }]
-    }]
     }
   }
 
@@ -105,8 +153,8 @@
     $cell: true,
     $type: 'ul',
     _skips: [],
-    _currentSkip:0,
-    id:'dialogs',
+    _currentSkip: 0,
+    id: 'dialogs',
     $components: [{
       $type: 'li',
       $text: ' videos[0]'
@@ -119,42 +167,25 @@
             $type: 'a',
             href: '#',
             $text: '  ' + el.text,
-            onclick(){
-              console.log(this.ontimeopdateListener)
-              var vd = document.getElementById('video-lesson')
-              vd.currentTime = el.start
-              vd.start = el.start
-              vd.end = el.end
-              vd.play()
-              vd.addEventListener('timeupdate',vd.ontimeopdateListener)
+            onclick() {
+              video.loop(el.start, el.finish, el.text)
             }
           }]
         }
       })
     },
-    _setSkips(data){
+    _setSkips(data) {
       // console.log(data)
       this._skips = data
     },
-    $init:function(){
-      var vd = document.getElementById('video-lesson')
-      vd.ontimeopdateListener = function (e) {
-        var dialogs = document.getElementById('dialogs')
-        if (vd.currentTime >= vd.end) {
-          vd.pause()
-          vd.removeEventListener('timeupdate',vd.ontimeopdateListener)
-        }
-      }
-      var v = document.getElementById('video-lesson')
-      var videos = ['5Where-it-is.mp4']
-    
+    $init: function () {
       dialogTest = `
     1. [Where is it](15-20)
     2. [Hello, welcome back](20-23)
     3. [This is program 5 (five)](23-25)
     3. [5...5...5...5](25-30)
     `
-    
+
       var comps = dialogTest.trim().split('\n').map(function (el, i) {
         if (el === "") { return '' }
         var r = /\d+\..\[(.*)]\((\S*)\)/
@@ -165,7 +196,7 @@
           if (i == 1) { pre.text = curr }
           if (i == 2) {
             pre.start = curr.split('-')[0]
-            pre.end = curr.split('-')[1]
+            pre.finish = curr.split('-')[1]
           }
           return pre
         }, {})
@@ -174,6 +205,7 @@
       document.getElementById('dialogs')._setSkips(comps)
     }
   }
+
 </script>
 <script src="courseplay.js"></script>
 
