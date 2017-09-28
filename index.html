@@ -42,7 +42,6 @@
       this.dialogs = document.getElementById('dialogs')
       this.editor = document.getElementById('editor')
       this.ontimeopdateListener = (e) => {
-        console.log(this)
         if (this.el.currentTime >= this.editor._finish) {
           this.pause()
           this.el.removeEventListener('timeupdate', this.ontimeopdateListener)
@@ -59,11 +58,11 @@
       this.el.addEventListener('timeupdate', this.ontimeopdateListener)
     }
 
-    play(){
+    play() {
       this.el.play()
     }
 
-    pause(){
+    pause() {
       this.el.pause()
     }
   }
@@ -77,6 +76,7 @@
     _start: 0,
     _finish: 0,
     _content: '',
+    _listening:'_start',
     id: 'editor',
     $components: [],
     $init() {
@@ -84,15 +84,17 @@
       var editor = document.getElementById('editor')
       var that = this
       this.ontimeopdateListener = function ontimeopdateListener(event) {
-        console.log('currentTime:' + vd.currentTime)
-        editor._start = vd.currentTime
-        editor._finish = vd.currentTime
-        editor.$update()
+        editor._setVideoTime(vd.currentTime)
       }
       vd.addEventListener('timeupdate', this.ontimeopdateListener)
       editor.$update()
     },
+    _setVideoTime(time){
+      this[this._listening] = time
+      // editor.$update()
+    },
     $update: function () {
+      var editor = document.getElementById('editor')
       this.$components = [{
         $type: 'div',
         class: 'input-group',
@@ -100,7 +102,10 @@
           $type: 'button',
           type: 'button',
           $text: this._start,
-          class: 'button'
+          class: 'button',
+          onclick(){
+            editor._listening = '_start'
+          }
         }, {
           $type: 'input',
           type: 'text',
@@ -112,23 +117,36 @@
           $type: 'button',
           type: 'button',
           $text: this._finish,
-          class: 'button'
+          class: 'button',
+          onclick(){
+            editor._listening = '_finish'
+          }
         },]
       }, {
         $type: 'div',
         class: 'input-group',
         $components: [{
           $type: 'input',
-          min: -10,
+          min: -5,
           step: .01,
-          max: 10,
+          max: 5,
           type: 'range',
-          value: 0
+          value: 0,
+          onfocus(){
+            editor._listening='_start'
+            console.log('focus')
+          },
+          ondragend(){
+            console.log('dragend')
+          },
+          oninput(event){
+            editor._setVideoTime(this.value)
+          }
         }, {
           $type: 'input',
-          min: -10,
+          min: -5,
           step: .01,
-          max: 10,
+          max: 5,
           type: 'range',
           value: 0
         }]
@@ -138,11 +156,22 @@
         $components: [{
           $type: 'button',
           type: 'button',
+          class: 'button button-secondary',
+          $text: 'Test video loop',
+          onclick() {
+            console.log({start:this._start, finish:this._finish})
+            video.loop(this._start, this._finish)
+          }
+        },{
+          $type: 'button',
+          type: 'button',
           class: 'button button-success',
           $text: 'Add',
           onclick() {
             ed = document.getElementById('editor')
-            document.getElementById('dialogs')._skips.push({ text: ed._content, start: ed._start, end: ed._finish })
+            var newElement = { text: ed._content, start: ed._start, end: ed._finish }
+            console.log(newElement)
+            document.getElementById('dialogs')._skips.push(newElement)
           }
         }]
       }]
@@ -157,13 +186,23 @@
     id: 'dialogs',
     $components: [{
       $type: 'li',
-      $text: ' videos[0]'
+      $text: ''
     }],
     $update: function () {
       this.$components = this._skips.map(function (el, i) {
         return {
           $type: 'li',
           $components: [{
+            $type: 'button',
+            type: 'button',
+            class: 'button button-xs',
+            $text: 'delete',
+            onclick: function(){
+              console.log(i)
+              document.getElementById('dialogs')._remove(i)
+              console.log(document.getElementById('dialogs'))
+            }
+          }, {
             $type: 'a',
             href: '#',
             $text: '  ' + el.text,
@@ -174,23 +213,23 @@
         }
       })
     },
+    _remove(index){
+      this._skips.splice(index,1)
+    },
     _setSkips(data) {
-      // console.log(data)
       this._skips = data
     },
     $init: function () {
       dialogTest = `
     1. [Where is it](15-20)
-    2. [Hello, welcome back](20-23)
-    3. [This is program 5 (five)](23-25)
+    2. [Hello, welcome back](21.2-23)
+    3. [This is program 5 (five)](23.2-25)
     3. [5...5...5...5](25-30)
     `
-
       var comps = dialogTest.trim().split('\n').map(function (el, i) {
         if (el === "") { return '' }
         var r = /\d+\..\[(.*)]\((\S*)\)/
         var rescued = r.exec(el)
-        // console.log(JSON.stringify(rescued))
         return rescued.reduce(function prepareElements(pre, curr, i) {
           if (i == 0) { return {} }
           if (i == 1) { pre.text = curr }
