@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>PIX: English Courses</title>
+  <link rel="stylesheet" href="shoelace.css">
+  <style>
+    .prose {
+      display: grid;
+      grid-template-columns: [full-start] minmax(1em, 1fr) [main-start] minmax(0, 40em) [main-end] minmax(1em, 1fr) [full-end];
+    }
+
+    .prose>* {
+      grid-column: main;
+    }s
+
+    .prose-splash {
+      grid-column: full;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="prose">
+    <video id="video-lesson" src="converted-videos/5Where-is-it-1.m4v" height="300" width="400" loop controls></video>
+  </div>
+  <div class="prose">
+    <ol id="editor"></ol>
+  </div>
+  <div class="prose">
+    <ol id="dialogs"></ol>
+  </div>
+</body>
+<script src="cell.js"></script>
+<script>
+  class Video {
+    constructor(elID) {
+      this.el = document.getElementById(elID)
+      this.dialogs = document.getElementById('dialogs')
+      this.editor = document.getElementById('editor')
+      this.ontimeopdateListener = (e) => {
+        if (this.el.currentTime >= this.editor._finish) {
+          this.pause()
+          this.el.removeEventListener('timeupdate', this.ontimeopdateListener)
+        }
+      }
+    }
+
+    loop(start, finish, content = "") {
+      this.el.currentTime = start
+      this.editor._start = start
+      this.editor._finish = finish
+      this.editor._content = content
+      this.play()
+      this.el.addEventListener('timeupdate', this.ontimeopdateListener)
+    }
+
+    play() {
+      this.el.play()
+    }
+
+    pause() {
+      this.el.pause()
+    }
+  }
+  var video = new Video('video-lesson')
+
+  var Editor = {
+    id: 'editor',
+    $cell: true,
+    $type: 'form',
+    _visible: true,
+    _start: 0,
+    _finish: 0,
+    _content: '',
+    _listening:'_start',
+    id: 'editor',
+    $components: [],
+    $init() {
+      var vd = document.getElementById('video-lesson')
+      var editor = document.getElementById('editor')
+      var that = this
+      this.ontimeopdateListener = function ontimeopdateListener(event) {
+        editor._setVideoTime(vd.currentTime)
+      }
+      vd.addEventListener('timeupdate', this.ontimeopdateListener)
+      editor.$update()
+    },
+    _setVideoTime(time){
+      this[this._listening] = time
+      // editor.$update()
+    },
+    $update: function () {
+      var editor = document.getElementById('editor')
+      this.$components = [{
+        $type: 'div',
+        class: 'input-group',
+        $components: [{
+          $type: 'button',
+          type: 'button',
+          $text: this._start,
+          class: 'button',
+          onclick(){
+            editor._listening = '_start'
+          }
+        }, {
+          $type: 'input',
+          type: 'text',
+          value: this._content,
+          onchange(event) {
+            document.getElementById('editor')._content = event.target.value
+          }
+        }, {
+          $type: 'button',
+          type: 'button',
+          $text: this._finish,
+          class: 'button',
+          onclick(){
+            editor._listening = '_finish'
+          }
+        },]
+      }, {
+        $type: 'div',
+        class: 'input-group',
+        $components: [{
+          $type: 'input',
+          min: -5,
+          step: .01,
+          max: 5,
+          type: 'range',
+          value: 0,
+          onfocus(){
+            editor._listening='_start'
+            console.log('focus')
+          },
+          ondragend(){
+            console.log('dragend')
+          },
+          oninput(event){
+            editor._setVideoTime(this.value)
+          }
+        }, {
+          $type: 'input',
+          min: -5,
+          step: .01,
+          max: 5,
+          type: 'range',
+          value: 0
+        }]
+      }, {
+        $type: 'div',
+        class: 'input-group',
+        $components: [{
+          $type: 'button',
+          type: 'button',
+          class: 'button button-secondary',
+          $text: 'Test video loop',
+          onclick() {
+            console.log({start:this._start, finish:this._finish})
+            video.loop(this._start, this._finish)
+          }
+        },{
+          $type: 'button',
+          type: 'button',
+          class: 'button button-success',
+          $text: 'Add',
+          onclick() {
+            ed = document.getElementById('editor')
+            var newElement = { text: ed._content, start: ed._start, end: ed._finish }
+            console.log(newElement)
+            document.getElementById('dialogs')._skips.push(newElement)
+          }
+        }]
+      }]
+    }
+  }
+
+  var list = {
+    $cell: true,
+    $type: 'ul',
+    _skips: [],
+    _currentSkip: 0,
+    id: 'dialogs',
+    $components: [{
+      $type: 'li',
+      $text: ''
+    }],
+    $update: function () {
+      this.$components = this._skips.map(function (el, i) {
+        return {
+          $type: 'li',
+          $components: [{
+            $type: 'button',
+            type: 'button',
+            class: 'button button-xs',
+            $text: 'delete',
+            onclick: function(){
+              console.log(i)
+              document.getElementById('dialogs')._remove(i)
+              console.log(document.getElementById('dialogs'))
+            }
+          }, {
+            $type: 'a',
+            href: '#',
+            $text: '  ' + el.text,
+            onclick() {
+              video.loop(el.start, el.finish, el.text)
+            }
+          }]
+        }
+      })
+    },
+    _remove(index){
+      this._skips.splice(index,1)
+    },
+    _setSkips(data) {
+      this._skips = data
+    },
+    $init: function () {
+      dialogTest = `
+    1. [Where is it](15-20)
+    2. [Hello, welcome back](21.2-23)
+    3. [This is program 5 (five)](23.2-25)
+    3. [5...5...5...5](25-30)
+    `
+      var comps = dialogTest.trim().split('\n').map(function (el, i) {
+        if (el === "") { return '' }
+        var r = /\d+\..\[(.*)]\((\S*)\)/
+        var rescued = r.exec(el)
+        return rescued.reduce(function prepareElements(pre, curr, i) {
+          if (i == 0) { return {} }
+          if (i == 1) { pre.text = curr }
+          if (i == 2) {
+            pre.start = curr.split('-')[0]
+            pre.finish = curr.split('-')[1]
+          }
+          return pre
+        }, {})
+      })
+      // console.log(comps)
+      document.getElementById('dialogs')._setSkips(comps)
+    }
+  }
+
+</script>
+<script src="courseplay.js"></script>
+
+</html>
