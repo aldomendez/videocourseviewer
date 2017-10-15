@@ -1,11 +1,12 @@
 import Vue from 'vue'
-import Hello from '@/components/Hello'
+import EditorControls from '@/components/EditorControls'
 
-describe('Hello.vue', () => {
+/* eslint-disable no-undef */
+describe('EditorControls.vue', () => {
   it('should render correct contents', () => {
-    const Constructor = Vue.extend(Hello)
+    const Constructor = Vue.extend(EditorControls)
     const vm = new Constructor().$mount()
-    expect(vm.$el.querySelector('.hello h1').textContent)
+    expect(vm.$el.querySelector('.editor label').textContent)
       .to.equal('Welcome to Your Vue.js App')
   })
 })

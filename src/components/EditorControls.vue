@@ -3,23 +3,25 @@
     <form action="#" id="editor" @submit.prevent="addNewDialog({localDialog})">
       <label for="dialog">Dialog editor</label>
       <div class="input-group">
-        <button class="button" type="button" @click="setListeningMode('start')">{{start}}</button>
+        <span class="input-addon">Dialog</span>
+        <input id="dialog" type="text" v-model.trim="videoCurrentTime" disabled>
+        <input id="dialog" type="text" v-model.trim="start">
         <input id="dialog" type="text" v-model.trim="localDialog">
-        <button class="button" type="button" @click="setListeningMode('finish')">{{finish}}</button>
+        <input id="dialog" type="text" v-model.trim="finish">
       </div>
       <label for="range">Video Offset {{offset}}</label>
       <div class="input-group">
-        <button class="button" type="button" @click="offsetVideoBy(-1)"><<<</button>
-        <button class="button" type="button" @click="offsetVideoBy(-.1)"><<</button>
-        <button class="button" type="button" @click="offsetVideoBy(-.01)"><</button>
-        <button class="button" type="button" @click="setStart({localDialog})"><-]</button>
-        <!-- <button class="button" type="button" @click="setEnd({dialog})">[-></button> -->
-        <button class="button" type="button" @click="offsetVideoBy(.01)">></button>
-        <button class="button" type="button" @click="offsetVideoBy(.1)">>></button>
-        <button class="button" type="button" @click="offsetVideoBy(1)">>>></button>
+        <button class="button" type="button" @click="offsetVideoBy(-1)"><i class="fa fa-fast-backward"></i></button>
+        <button class="button" type="button" @click="offsetVideoBy(-.1)"><i class="fa fa-backward"></i></button>
+        <button class="button" type="button" @click="offsetVideoBy(-.01)"><i class="fa fa-step-backward"></i></button>
+        <button class="button" type="button" @click="setTime('start')"><i class="fa fa-chevron-left"></i></button>
+        <button class="button" type="button" @click="setTime('finish')"><i class="fa fa-chevron-right"></i></button>
+        <button class="button" type="button" @click="offsetVideoBy(.01)"><i class="fa fa-step-forward"></i></button>
+        <button class="button" type="button" @click="offsetVideoBy(.1)"><i class="fa fa-forward"></i></button>
+        <button class="button" type="button" @click="offsetVideoBy(1)"><i class="fa fa-fast-forward"></i></button>
       </div>
       <div class="input-group">
-        <button class="button-secondary" type="button" @click="loopVideo" >Test video loop</button>
+        <button class="button-secondary" type="button" @click="testLoop" >Test video loop</button>
         <button class="button-success" type="button" @click="addVideo({localDialog})">Add</button>
       </div>
     </form>
@@ -34,12 +36,31 @@ export default {
       localDialog:''
     }
   },
-  computed: mapState(['start','finish','dialog','offset']),
+  computed: {
+    start:{
+      get(){return this.$store.state.start},
+      set(event){return this.$store.commit('setStart',event)}
+    },
+    finish:{
+      get(){return this.$store.state.finish},
+      set(event){return this.$store.commit('setFinish',event)}
+    },
+    ...mapState(['dialog','offset','videoCurrentTime'])
+  },
   methods:{
     onTimeUpdateListener(){
 
     },
-    ...mapMutations(['setListeningMode','offsetVideoBy','setDialog','addNewDialog','setEnd','setStart', 'loopVideo', 'addVideo'])
+    ...mapMutations(['setTime','offsetVideoBy','setDialog','addNewDialog','setStart','setFinish', 'loopVideo', 'addVideo','testLoop'])
+  },
+  filters:{
+    twoDecimals(value){
+      if(typeof value === 'Number'){
+        return value.toFixed(2)
+      } else {
+        return value
+      }
+    }
   }
 }
 </script>

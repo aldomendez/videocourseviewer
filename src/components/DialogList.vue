@@ -1,7 +1,7 @@
 <template>
   <div>
-    <ul v-for="(el, i) in dialogList" v-bind:key="i">
-      <li><a href="#" @click="playLoop({i})">{{el.dialog}}</a></li>
+    <ul>
+      <li v-for="(el, i) in dialogList" v-bind:key="i"><a href="#" @click="playLoop({i})">{{el.dialog}}</a></li>
     </ul>
   </div>
 </template>

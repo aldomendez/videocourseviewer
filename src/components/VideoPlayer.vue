@@ -27,7 +27,7 @@ export default {
     ontimeupdatelistener(e) {
       if (this.player.currentTime >= this.finish) {
         this.player.pause()
-        this.player.removeEventListener('timeupdate', this.ontimeopdateListener)
+        this.player.removeEventListener('timeupdate', this.ontimeupdatelistener)
       }
     }
   },
@@ -35,10 +35,10 @@ export default {
     this.player = this.$refs.videoPlayer
     EventBus.$on('set-video-current-time', (payload) => {
       this.player.currentTime = payload
-      console.log(payload)
+      // console.log(payload)
     })
     EventBus.$on('play-loop', (payload) => {
-      console.log(this.ontimeupdatelistener)
+      // console.log(this.ontimeupdatelistener)
       this.player.currentTime = payload.start
       this.finish = payload.finish
       this.player.addEventListener('timeupdate', this.ontimeupdatelistener)
