@@ -6,8 +6,10 @@
         <span class="input-addon">Dialog</span>
         <input id="dialog" type="text" v-model.trim="videoCurrentTime" disabled>
         <input id="dialog" type="text" v-model.trim="start">
-        <input id="dialog" type="text" v-model.trim="localDialog">
         <input id="dialog" type="text" v-model.trim="finish">
+      </div>
+      <div class="input-group">
+        <textarea id="dialog" type="text" v-model.trim="localDialog"></textarea>
       </div>
       <label for="range">Video Offset {{offset}}</label>
       <div class="input-group">
@@ -39,7 +41,9 @@ export default {
   computed: {
     start:{
       get(){return this.$store.state.start},
-      set(event){return this.$store.commit('setStart',event)}
+      set(event){
+        return this.$store.commit('setStart',event)
+        }
     },
     finish:{
       get(){return this.$store.state.finish},

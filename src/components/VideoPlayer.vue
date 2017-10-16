@@ -1,6 +1,6 @@
 <template>
   <div>
-    <video ref="videoPlayer" src="static/5Where-is-it-1.m4v" height="300" width="400" loop muted controls v-on:timeupdate="log">
+    <video ref="videoPlayer" src="static/5Where-is-it-1.m4v" height="300" width="400" loop controls v-on:timeupdate="log">
     </video>
     <br>
     <mark class="dialog">{{dialog}}</mark>
