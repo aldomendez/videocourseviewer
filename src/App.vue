@@ -7,7 +7,6 @@
 </template>
 
 <script>
-  import Hello from './components/Menu'
   import VideoPlayer from './components/VideoPlayer'
   import EditorControls from './components/EditorControls'
   import DialogList from './components/DialogList'
@@ -15,10 +14,14 @@
   export default {
     name: 'app',
     components: {
-      Hello,
       VideoPlayer,
       EditorControls,
       DialogList
+    },
+    mounted(){
+      this.$http.get('static/5Where-is-it-1.md').then(response => {
+        this.$store.commit('parseDialogs', response.body)
+      })
     }
   }
 </script>

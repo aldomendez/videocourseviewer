@@ -232,7 +232,7 @@
         var rescued = r.exec(el)
         return rescued.reduce(function prepareElements(pre, curr, i) {
           if (i == 0) { return {} }
-          if (i == 1) { pre.text = curr }
+          if (i == 1) { pre.dialog = curr }
           if (i == 2) {
             pre.start = curr.split('-')[0]
             pre.finish = curr.split('-')[1]

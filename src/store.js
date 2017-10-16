@@ -6,15 +6,20 @@ export default {
     start: 0,
     finish: 0,
     offset: 0,
-    dialog: 'This is program 5',
+    dialog: '',
     dialogList: [],
     rawDialog: ``
   },
   getters: {
     getRawTranscript (state, getters) {
       return state.dialogList.map((el, i) => {
-        return `${i + 1}.[${el.dialog}] (${el.start}-${el.finish})`
+        return `${i + 1}. [${el.dialog}](${el.start}-${el.finish})`
       }).join('\n')
+    },
+    currentDialog (state, getters) {
+      return  state.dialogList.findIndex((el,i)=>{
+        return el.start >= state.videoCurrentTime
+      }) - 1
     }
   },
   mutations: {
@@ -69,7 +74,7 @@ export default {
         var rescued = r.exec(el)
         return rescued.reduce(function prepareElements (pre, curr, i) {
           if (i === 0) { return {} }
-          if (i === 1) { pre.text = curr }
+          if (i === 1) { pre.dialog = curr }
           if (i === 2) {
             pre.start = curr.split('-')[0]
             pre.finish = curr.split('-')[1]

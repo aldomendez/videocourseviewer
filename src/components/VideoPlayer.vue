@@ -1,6 +1,6 @@
 <template>
   <div>
-    <video ref="videoPlayer" src="static/5Where-is-it-1.m4v" height="300" width="400" loop controls v-on:timeupdate="log">
+    <video ref="videoPlayer" src="static/5Where-is-it-1.m4v" :height="height" :width="width" loop controls v-on:timeupdate="log">
     </video>
     <br>
     <mark class="dialog">{{dialog}}</mark>
@@ -13,8 +13,8 @@ export default {
   data() {
     return {
       player: null,
-      height: 300,
-      width: 400,
+      height: '400px',
+      width: '400px',
       start: 0,
       finish: 0
     }
@@ -33,7 +33,7 @@ export default {
   },
   mounted() {
     this.player = this.$refs.videoPlayer
-    EventBus.$on('set-video-current-time', (payload) => {
+    EventBus.$on('changed-current-dialog', (payload) => {
       this.player.currentTime = payload
       // console.log(payload)
     })
