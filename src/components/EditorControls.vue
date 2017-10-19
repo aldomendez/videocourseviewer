@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="editing">
     <form action="#" id="editor" @submit.prevent="addNewDialog({localDialog})">
       <label for="dialog">Dialog editor</label>
       <div class="input-group">
@@ -49,7 +49,7 @@ export default {
       get(){return this.$store.state.finish},
       set(event){return this.$store.commit('setFinish',event)}
     },
-    ...mapState(['dialog','offset','videoCurrentTime'])
+    ...mapState(['dialog','offset','videoCurrentTime','editing'])
   },
   methods:{
     onTimeUpdateListener(){

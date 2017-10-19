@@ -8,7 +8,8 @@ export default {
     offset: 0,
     dialog: '',
     dialogList: [],
-    rawDialog: ``
+    rawDialog: ``,
+    editing: true
   },
   getters: {
     getRawTranscript (state, getters) {
@@ -17,12 +18,15 @@ export default {
       }).join('\n')
     },
     currentDialog (state, getters) {
-      return  state.dialogList.findIndex((el,i)=>{
+      return state.dialogList.findIndex((el, i) => {
         return el.start >= state.videoCurrentTime
       }) - 1
     }
   },
   mutations: {
+    setEditing (state, payload) {
+      state.editing = !state.editing
+    },
     setCurrentTime (state, videoCurrentTime) {
       state.videoCurrentTime = videoCurrentTime
     },

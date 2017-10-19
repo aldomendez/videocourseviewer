@@ -19,7 +19,7 @@
       DialogList
     },
     mounted(){
-      this.$http.get('static/5Where-is-it-1.md').then(response => {
+      this.$http.get('static/6When-1.md').then(response => {
         this.$store.commit('parseDialogs', response.body)
       })
     }

@@ -1,11 +1,12 @@
 <template>
   <div>
+    <input type="checkbox" v-model="editing" id="checkbox"><label for="checkbox">Editing</label>
     <ul ref="dialogContainer">
       <li class="dialog" :class="[currentDialog===i?'active':'']" v-for="(el, i) in dialogList" v-bind:key="i">
         {{scrollHeigth}} <a href="#" @click="playLoop({i})" :ref="i">{{el.dialog}}</a>
       </li>
     </ul>
-    <textarea name="" id="" cols="30" rows="10" v-model="getRawTranscript"></textarea>
+    <textarea v-if="editing" name="" id="" cols="30" rows="10" v-model="getRawTranscript"></textarea>
   </div>
 </template>
 
@@ -30,6 +31,12 @@ export default {
         // console.log(this.$refs[this.$store.getters.currentDialog][0].offsetWidth)
       }
       return 4
+    },
+    editing:{
+      get(){return this.$store.state.editing},
+      set(event){
+        return this.$store.commit('setEditing',event)
+        }
     },
     ...mapState(['dialogList']),
     ...mapGetters(['getRawTranscript','currentDialog'])
