@@ -3,7 +3,7 @@
     <input type="checkbox" v-model="editing" id="checkbox"><label for="checkbox">Editing</label>
     <ul ref="dialogContainer">
       <li class="dialog" :class="[currentDialog===i?'active':'']" v-for="(el, i) in dialogList" v-bind:key="i">
-        {{scrollHeigth}} <a href="#" @click="playLoop({i})" :ref="i">{{el.dialog}}</a>
+        <a href="#" @click="playLoop({i})" :ref="i">{{el.dialog}}</a>
       </li>
     </ul>
     <textarea v-if="editing" name="" id="" cols="30" rows="10" v-model="getRawTranscript"></textarea>
