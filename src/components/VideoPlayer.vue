@@ -13,8 +13,8 @@ export default {
   data() {
     return {
       player: null,
-      height: '400px',
-      width: '400px',
+      height: '300',
+      width: '400',
       start: 0,
       finish: 0
     }
@@ -43,6 +43,9 @@ export default {
       this.finish = payload.finish
       this.player.addEventListener('timeupdate', this.ontimeupdatelistener)
       this.player.play()
+    })
+    EventBus.$on('set-video-current-time',(payload)=>{
+      this.player.currentTime = payload
     })
   }
 }
