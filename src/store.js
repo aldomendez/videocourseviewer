@@ -19,8 +19,8 @@ export default {
     },
     currentDialog (state, getters) {
       return state.dialogList.findIndex((el, i) => {
-        return el.start >= state.videoCurrentTime
-      }) - 1
+        return el.start <= state.videoCurrentTime && el.finish >= state.videoCurrentTime
+      })
     }
   },
   mutations: {
