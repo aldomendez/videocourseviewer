@@ -29,7 +29,7 @@
 <style scoped>
   .app {
     display: grid;
-    grid-template-columns: [full-start] minmax(1em, 1fr) [main-start] minmax(0, 40em) [main-end] minmax(1em, 1fr) [full-end];
+    grid-template-columns: [full-start] minmax(1em, 1fr) [main-start] minmax(0, 800px) [main-end] minmax(1em, 1fr) [full-end];
   }
 
   .app>* {

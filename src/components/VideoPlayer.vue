@@ -14,12 +14,16 @@ export default {
     return {
       player: null,
       height: '300',
-      width: '400',
       start: 0,
       finish: 0
     }
   },
-  computed: mapState(['dialog']),
+  computed: {
+    width(){
+      return this.height * (16/9)
+    },
+    ...mapState(['dialog'])
+  },
   methods: {
     log(e) {
       this.$store.commit('setCurrentTime', this.player.currentTime)
