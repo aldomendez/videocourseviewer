@@ -56,6 +56,7 @@ ul {
   padding-left: 2px;
   height: 25vh;
   overflow-y: auto;
+  scroll-behavior: smooth;
 }
 
 li.dialog {
