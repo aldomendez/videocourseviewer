@@ -43,7 +43,6 @@ export default {
       EventBus.$emit('set-video-current-time', state.videoCurrentTime)
     },
     setDialog (state, payload) {
-      console.log(payload)
       state.dialog = payload
     },
     addNewDialog (state, payload) {
@@ -61,8 +60,13 @@ export default {
       state.dialogList.push({
         start: state.start,
         finish: state.finish,
-        dialog: payload.localDialog
+        dialog: state.dialog
       })
+      state.dialog = ''
+      state.start = state.finish
+      window.localStorage.setItem('dialogList', JSON.stringify(state.dialogList.map((el, i) => {
+        return `${i + 1}. [${el.dialog}](${el.start}-${el.finish})`
+      }).join('\n')))
     },
     playLoop (state, payload) {
       state.dialog = state.dialogList[payload.i]['dialog']
@@ -79,7 +83,7 @@ export default {
     parseDialogs (state, payload) {
       state.dialogList = payload
         .trim()
-        .split('\n')
+        .split(/\r\n|\r|\n|\\n/g)
         .map(function (el, i) {
           if (el === '') { return '' }
           var r = /\d+\..\[(.*)]\((\S*)\)/

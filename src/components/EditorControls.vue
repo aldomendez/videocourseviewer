@@ -9,9 +9,9 @@
         <input id="dialog" type="text" v-model.trim="finish">
       </div>
       <div class="input-group">
+        <label for="dialog"></label>
         <textarea id="dialog" type="text" v-model.trim="dialog"></textarea>
       </div>
-      <label for="range">Video Offset {{offset}}</label>
       <div class="input-group">
         <button class="button" type="button" @click="offsetVideoBy(-1)"><i class="fa fa-fast-backward"></i></button>
         <button class="button" type="button" @click="offsetVideoBy(-.1)"><i class="fa fa-backward"></i></button>
@@ -25,7 +25,7 @@
       </div>
       <div class="input-group">
         <button class="button-secondary" type="button" @click="testLoop" >Test video loop</button>
-        <button class="button-success" type="button" @click="addVideo({localDialog})">Add</button>
+        <button class="button-success" type="button" @click="addVideo()">Add</button>
       </div>
     </form>
   </div>
