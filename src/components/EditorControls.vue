@@ -9,7 +9,7 @@
         <input id="dialog" type="text" v-model.trim="finish">
       </div>
       <div class="input-group">
-        <textarea id="dialog" type="text" v-model.trim="localDialog"></textarea>
+        <textarea id="dialog" type="text" v-model.trim="dialog"></textarea>
       </div>
       <label for="range">Video Offset {{offset}}</label>
       <div class="input-group">
@@ -21,6 +21,7 @@
         <button class="button" type="button" @click="offsetVideoBy(.01)"><i class="fa fa-step-forward"></i></button>
         <button class="button" type="button" @click="offsetVideoBy(.1)"><i class="fa fa-forward"></i></button>
         <button class="button" type="button" @click="offsetVideoBy(1)"><i class="fa fa-fast-forward"></i></button>
+        <button class="button button-light" type="button" @click="playVideo()"><i class="fa fa-play"></i></button>
       </div>
       <div class="input-group">
         <button class="button-secondary" type="button" @click="testLoop" >Test video loop</button>
@@ -33,15 +34,18 @@
 <script>
 import {mapState, mapMutations} from 'vuex'
 export default {
-  data(){
-    return {
-      localDialog:''
-    }
-  },
   computed: {
+    dialog:{
+      get(){return this.$store.state.dialog},
+      set(event){return this.$store.commit('setDialog',event)}
+    },
     start:{
-      get(){return this.$store.state.start},
+      get(){
+        // TODO: move mintommss and used here to prettify the output
+        return this.$store.state.start
+        },
       set(event){
+        // TODO: use the inverse to store it again in the model as it should be
         return this.$store.commit('setStart',event)
         }
     },
@@ -49,13 +53,13 @@ export default {
       get(){return this.$store.state.finish},
       set(event){return this.$store.commit('setFinish',event)}
     },
-    ...mapState(['dialog','offset','videoCurrentTime','editing'])
+    ...mapState(['offset','videoCurrentTime','editing'])
   },
   methods:{
     onTimeUpdateListener(){
 
     },
-    ...mapMutations(['setTime','offsetVideoBy','setDialog','addNewDialog','setStart','setFinish', 'loopVideo', 'addVideo','testLoop'])
+    ...mapMutations(['setTime','offsetVideoBy','setDialog','addNewDialog','setFinish', 'loopVideo', 'addVideo','testLoop','playVideo'])
   },
   filters:{
     twoDecimals(value){
@@ -64,6 +68,12 @@ export default {
       } else {
         return value
       }
+    },
+    minTommss(minutes){
+      var sign = minutes < 0 ? "-" : "";
+      var min = Math.floor(Math.abs(minutes));
+      var sec = Math.floor((Math.abs(minutes) * 60) % 60);
+      return sign + (min < 10 ? "0" : "") + min + ":" + (sec < 10 ? "0" : "") + sec;
     }
   }
 }

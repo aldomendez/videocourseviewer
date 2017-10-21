@@ -47,6 +47,10 @@ export default {
     EventBus.$on('set-video-current-time',(payload)=>{
       this.player.currentTime = payload
     })
+    EventBus.$on('play-video',(payload)=>{
+      this.player.removeEventListener('timeupdate', this.ontimeupdatelistener)
+      this.player.play()
+    })
   }
 }
 </script>

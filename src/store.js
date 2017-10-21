@@ -9,7 +9,7 @@ export default {
     dialog: '',
     dialogList: [],
     rawDialog: ``,
-    editing: true
+    editing: false
   },
   getters: {
     getRawTranscript (state, getters) {
@@ -29,6 +29,10 @@ export default {
     },
     setCurrentTime (state, videoCurrentTime) {
       state.videoCurrentTime = videoCurrentTime
+      EventBus.$emit('moved-video-time', state.videoCurrentTime)
+    },
+    playVideo () {
+      EventBus.$emit('play-video')
     },
     setTime (state, payload) {
       state[payload] = state.videoCurrentTime
@@ -39,6 +43,7 @@ export default {
       EventBus.$emit('set-video-current-time', state.videoCurrentTime)
     },
     setDialog (state, payload) {
+      console.log(payload)
       state.dialog = payload
     },
     addNewDialog (state, payload) {
@@ -72,20 +77,32 @@ export default {
       })
     },
     parseDialogs (state, payload) {
-      state.dialogList = payload.trim().split('\n').map(function (el, i) {
-        if (el === '') { return '' }
-        var r = /\d+\..\[(.*)]\((\S*)\)/
-        var rescued = r.exec(el)
-        return rescued.reduce(function prepareElements (pre, curr, i) {
-          if (i === 0) { return {} }
-          if (i === 1) { pre.dialog = curr }
-          if (i === 2) {
-            pre.start = curr.split('-')[0]
-            pre.finish = curr.split('-')[1]
+      state.dialogList = payload
+        .trim()
+        .split('\n')
+        .map(function (el, i) {
+          if (el === '') { return '' }
+          var r = /\d+\..\[(.*)]\((\S*)\)/
+          var parsed = r.exec(el)
+          return parsed.reduce(function prepareElements (pre, curr, i) {
+            // if (i === 0) { return {} }
+            if (i === 1) { pre.dialog = curr }
+            if (i === 2) {
+              pre.start = +(+curr.split('-')[0]).toFixed(2)
+              pre.finish = +(+curr.split('-')[1]).toFixed(2)
+            }
+            return pre
+          }, {})
+        })
+        .sort((a, b) => {
+          if (a.start < b.start) {
+            return -1
+          } else if (a.start > b.start) {
+            return 1
+          } else {
+            return 0
           }
-          return pre
-        }, {})
-      })
+        })
     }
   }
 }

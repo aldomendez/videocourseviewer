@@ -1,7 +1,7 @@
 <template>
   <div>
     <input type="checkbox" v-model="editing" id="checkbox"><label for="checkbox">Editing</label>
-    <ul ref="dialogContainer">
+    <ul ref="dialogContainer" id="dcont">
       <li class="dialog" :class="[currentDialog===i?'active':'']" v-for="(el, i) in dialogList" v-bind:key="i">
         <a href="#" @click="playLoop({i})" :ref="i">{{el.dialog}}</a>
       </li>
@@ -20,18 +20,6 @@ export default {
     }
   },
   computed: {
-    scrollHeigth(a, b){
-      // console.log({a})
-      // console.log(this.$store.getters.currentDialog)
-      if(this.$store.getters.currentDialog > 0 ){
-        console.log(this.$refs['dialogContainer'].scrollTop)
-        console.log(this.$refs[this.$store.getters.currentDialog][0].getBoundingClientRect())
-        // console.log(this.$refs[this.$store.getters.currentDialog][0].offsetLeft)
-        // console.log(this.$refs[this.$store.getters.currentDialog][0].offsetTop)
-        // console.log(this.$refs[this.$store.getters.currentDialog][0].offsetWidth)
-      }
-      return 4
-    },
     editing:{
       get(){return this.$store.state.editing},
       set(event){
@@ -42,11 +30,20 @@ export default {
     ...mapGetters(['getRawTranscript','currentDialog'])
   },
   methods: {
+    setScrollHeigth(){
+      // console.log(this.$store.getters.currentDialog)
+      if(this.$store.getters.currentDialog > 0 ){
+        this.$refs['dialogContainer'].scrollTop = this.$refs[this.$store.getters.currentDialog][0].offsetTop - this.$refs['dialogContainer'].offsetTop - 50
+        // usefull for testing in the browser
+        // document.getElementById('dcont').scrollTop = document.getElementsByTagName('li')[11].offsetTop - document.getElementById('dcont').offsetTop
+      }
+      return 4
+    },
     ...mapMutations(['playLoop'])
   },
   mounted() {
-    EventBus.$on('set-video-current-time', (payload) => {
-      
+    EventBus.$on('moved-video-time', (payload) => {
+      this.setScrollHeigth()
     })
   }
 }
@@ -58,7 +55,7 @@ ul {
   margin-left: 0;
   padding-left: 2px;
   height: 25vh;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 li.dialog {
