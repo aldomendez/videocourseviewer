@@ -1,11 +1,14 @@
 <template>
   <div>
-    <input type="checkbox" v-model="editing" id="checkbox"><label for="checkbox">Editing</label>
     <ul ref="dialogContainer" id="dcont">
       <li class="dialog" :class="[currentDialog===i?'active':'']" v-for="(el, i) in dialogList" v-bind:key="i">
         <a href="#" @click="playLoop({i})" :ref="i">{{el.dialog}}</a>
       </li>
     </ul>
+    <span class="switch  switch-xs">
+      <input type="checkbox" v-model="editing" id="editing-control">
+      <label for="editing-control">Editing</label>
+    </span>
     <textarea v-if="editing" name="" id="" cols="30" rows="10" v-model="getRawTranscript"></textarea>
   </div>
 </template>
@@ -51,10 +54,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+div {
+  margin-top: 10px;
+
+}
 ul {
   margin-left: 0;
   padding-left: 2px;
-  height: 25vh;
+  height: 140px;
   overflow-y: auto;
   scroll-behavior: smooth;
 }
