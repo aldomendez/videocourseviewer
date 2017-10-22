@@ -9,7 +9,8 @@ export default {
     dialog: '',
     dialogList: [],
     rawDialog: ``,
-    editing: false
+    editing: false,
+    height: 300
   },
   getters: {
     getRawTranscript (state, getters) {
@@ -47,6 +48,9 @@ export default {
     },
     setDialog (state, payload) {
       state.dialog = payload
+    },
+    setHeight (state, payload) {
+      state.height = payload
     },
     addNewDialog (state, payload) {
       EventBus.$emit('setVideoCurrentTime', {state})

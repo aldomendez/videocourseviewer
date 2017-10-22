@@ -11,7 +11,6 @@ export default {
   data() {
     return {
       player: null,
-      height: '300',
       start: 0,
       finish: 0
     }
@@ -20,7 +19,7 @@ export default {
     width(){
       return this.height * (16/9)
     },
-    ...mapState(['dialog'])
+    ...mapState(['dialog','height'])
   },
   methods: {
     log(e) {

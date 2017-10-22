@@ -12,6 +12,10 @@
         <label for="dialog"></label>
         <textarea id="dialog" type="text" v-model.trim="dialog"></textarea>
       </div>
+      <div class="input-field">
+        <label for="heightSlider">Video size</label>
+        <input type="range" id="heightSlider" v-model="height" min="100" max="1000" step="50">
+      </div>
       <div class="input-group">
         <button class="button" type="button" @click="offsetVideoBy(-1)"><i class="fa fa-fast-backward"></i></button>
         <button class="button" type="button" @click="offsetVideoBy(-.1)"><i class="fa fa-backward"></i></button>
@@ -38,6 +42,10 @@ export default {
     dialog:{
       get(){return this.$store.state.dialog},
       set(event){return this.$store.commit('setDialog',event)}
+    },
+    height:{
+      get(){return this.$store.state.height},
+      set(event){return this.$store.commit('setHeight',event)}
     },
     start:{
       get(){
