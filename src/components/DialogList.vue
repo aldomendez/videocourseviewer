@@ -2,6 +2,7 @@
   <div>
     <ul ref="dialogContainer" id="dcont">
       <li class="dialog" :class="[currentDialog===i?'active':'']" v-for="(el, i) in dialogList" v-bind:key="i">
+        <button @click="removeDialog(i)" v-if="editing" type="button" class="button-xs"><i class="fa fa-minus-square"></i></button>
         <a href="#" @click="playLoop({i})" :ref="i">{{el.dialog}}</a>
       </li>
     </ul>
@@ -42,7 +43,7 @@ export default {
       }
       return 4
     },
-    ...mapMutations(['playLoop'])
+    ...mapMutations(['playLoop','removeDialog'])
   },
   mounted() {
     EventBus.$on('moved-video-time', (payload) => {

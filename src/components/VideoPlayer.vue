@@ -2,8 +2,6 @@
   <div>
     <video ref="videoPlayer" src="static/6When-1.m4v" :height="height" :width="width" loop controls v-on:timeupdate="log">
     </video>
-    <br>
-    <mark class="dialog">{{dialog}}</mark>
   </div>
 </template>
 <script>

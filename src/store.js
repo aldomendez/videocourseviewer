@@ -24,6 +24,9 @@ export default {
     }
   },
   mutations: {
+    removeDialog (state, payload) {
+      state.dialogList.splice(payload, 1)
+    },
     setEditing (state, payload) {
       state.editing = !state.editing
     },
