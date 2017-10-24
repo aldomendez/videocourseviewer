@@ -11,6 +11,8 @@ export default {
     rawDialog: ``,
     editing: false,
     height: 300
+    // todo: insert offset of active dialog in viewport
+    // todo: size of dialog viewport
   },
   getters: {
     getRawTranscript (state, getters) {

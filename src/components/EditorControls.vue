@@ -13,8 +13,8 @@
         <textarea id="dialog" type="text" v-model.trim="dialog"></textarea>
       </div>
       <div class="input-field">
-        <label for="heightSlider">Video size</label>
-        <input type="range" id="heightSlider" v-model="height" min="100" max="1000" step="50">
+        <label for="heightSlider">Video size ({{height}})</label>
+        <input type="range" id="heightSlider" v-model="height" min="100" max="1000">
       </div>
       <div class="input-group">
         <button class="button" type="button" @click="offsetVideoBy(-1)"><i class="fa fa-fast-backward"></i></button>
