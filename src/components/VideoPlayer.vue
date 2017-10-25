@@ -1,6 +1,6 @@
 <template>
   <div>
-    <video ref="videoPlayer" src="static/6When-1.m4v" :height="height" :width="width" loop controls v-on:timeupdate="log">
+    <video ref="videoPlayer" src="static/7How-much-How-many-1.m4v" :height="height" :width="width" loop controls v-on:timeupdate="log">
     </video>
   </div>
 </template>

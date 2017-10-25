@@ -22,7 +22,7 @@
       if(window.localStorage.getItem('dialogList')){
         this.$store.commit('parseDialogs', JSON.parse(window.localStorage.getItem('dialogList')))
       }else{
-        this.$http.get('static/6When-1.md').then(response => {
+        this.$http.get('static/7How-much-How-many-1.md').then(response => {
           this.$store.commit('parseDialogs', response.body)
         })
       }
